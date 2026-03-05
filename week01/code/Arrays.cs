@@ -9,11 +9,22 @@ public static class Arrays
     public static double[] MultiplesOf(double number, int length)
     {
         // TODO Problem 1 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+                // Plan:
+                // 1. Create an array of type double with size equal to length.
+                // 2. Use a for loop that runs from 0 to length - 1. 
+                // 3. For each index i, calculate the multiple of the number.
+                // 4. The formula for each multiple will be number * (i + 1).
+                // 5. Store that value in the array at position i.
+                // 6. After the loop finishes, return the array.
 
-        return []; // replace this return statement with your own
+        double[] result = new double[length];
+
+        for(int i = 0; i < length; i++)
+        {
+            result[i] = number * (i +1);
+        }
+
+        return result; // replace this return statement with your own
     }
 
     /// <summary>
@@ -26,8 +37,17 @@ public static class Arrays
     public static void RotateListRight(List<int> data, int amount)
     {
         // TODO Problem 2 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        // Plan:
+        // 1. Determine the index where the last 'amount' elements start.
+        //    This can be calculated as data.Count - amount.
+        // 2. Use GetRange to copy the last 'amount' elements into a temporary list.
+        // 3. Remove those elements from the original list using RemoveRange.
+        // 4. Insert the temporary list at the beginning of the original list using InsertRange.
+        // 5. This will rotate the list to the right by the specified amount. 
+
+        int startIndex = data.Count - amount;
+        List<int> endPart = data.GetRange(startIndex, amount);
+        data.RemoveRange(startIndex, amount);
+        data.InsertRange(0, endPart);
     }
 }
