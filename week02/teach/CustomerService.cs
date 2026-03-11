@@ -10,36 +10,57 @@ public class CustomerService {
 
         // Test Cases
 
-        // Test 1
-        // Scenario: 
-        // Expected Result: 
+        // Test 1: Create queue with valid size
+        // Scenario: Initialize a CustomerService queue with maxSize = 3
+        // Expected Result: Queue is empty, max_size = 3
         Console.WriteLine("Test 1");
+        var cs1 = new CustomerService();
+        Console.WriteLine(cs1);
 
-        // Defect(s) Found: 
-
+        // Defect(s) Found: None
         Console.WriteLine("=================");
 
-        // Test 2
-        // Scenario: 
-        // Expected Result: 
+        // Test 2: Create queue with invalid size (≤0)
+        // Scenario: Initialize a CustomerService queue with maxSize = 0
+        // Expected Result: Queue is empty, max_size defaults to 10
         Console.WriteLine("Test 2");
+        var cs2 = new CustomerService();
+        Console.WriteLine(cs2);
 
-        // Defect(s) Found: 
-
+        // Defect(s) Found: None
         Console.WriteLine("=================");
 
         // Add more Test Cases As Needed Below
+
+        // Test 3: Add customers until queue is full
+        // Scenario: Add 4 customers to a queue with maxSize = 3
+        // Expected Result: First 3 customers are added successfully, 4th shows error
+        Console.WriteLine("Test 3");
+        cs1.AddNewCustomer();
+        cs1.AddNewCustomer();
+        cs1.AddNewCustomer();
+        cs1.AddNewCustomer(); // Should show error
+        Console.WriteLine(cs1);
+
+        // Defect(s) Found: Original code allowed 4th customer due to using '>' instead of '>='
+        Console.WriteLine("=================");
+
+        // ===========================
+        // Test 4: Serve customers from the queue
+        // Scenario: Dequeue all customers from the queue and attempt one extra
+        // Expected Result: Customers served in FIFO order, last attempt shows error
+        Console.WriteLine("Test 4");
+        cs1.ServeCustomer(); // Alice
+        cs1.ServeCustomer(); // Bob
+        cs1.ServeCustomer(); // Charlie
+        cs1.ServeCustomer(); // Queue empty → should show error
+
+        // Defect(s) Found: Original code crashed when queue was empty due to accessing _queue[0] after RemoveAt(0)
+        Console.WriteLine("=================");
     }
 
-    private readonly List<Customer> _queue = new();
+        private readonly List<Customer> _queue = new();
     private readonly int _maxSize;
-
-    public CustomerService(int maxSize) {
-        if (maxSize <= 0)
-            _maxSize = 10;
-        else
-            _maxSize = maxSize;
-    }
 
     /// <summary>
     /// Defines a Customer record for the service queue.
@@ -57,7 +78,7 @@ public class CustomerService {
         private string Problem { get; }
 
         public override string ToString() {
-            return $"{Name} ({AccountId})  : {Problem}";
+            return $"{Name} ({AccountId}): {Problem}";
         }
     }
 
@@ -67,7 +88,8 @@ public class CustomerService {
     /// </summary>
     private void AddNewCustomer() {
         // Verify there is room in the service queue
-        if (_queue.Count > _maxSize) {
+        // if (_queue.Count > _maxSize) // Defect 3 - should use >=
+        if (_queue.Count >= _maxSize) {
             Console.WriteLine("Maximum Number of Customers in Queue.");
             return;
         }
@@ -88,9 +110,17 @@ public class CustomerService {
     /// Dequeue the next customer and display the information.
     /// </summary>
     private void ServeCustomer() {
-        _queue.RemoveAt(0);
-        var customer = _queue[0];
-        Console.WriteLine(customer);
+        // Need to check if there are customers in our queue
+        if (_queue.Count <= 0) // Defect 2 - Need to check queue length
+        {
+            Console.WriteLine("No Customers in the queue");
+        }
+        else {
+            // Need to read and save the customer before it is deleted from the queue
+            var customer = _queue[0];
+            _queue.RemoveAt(0); // Defect 1 - Delete should be done after
+            Console.WriteLine(customer);
+        }
     }
 
     /// <summary>
